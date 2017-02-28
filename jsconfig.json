@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "target": "ES6",
+        "outDir": "./output"
+    },
+    "include": [
+        "./src/index.js",
+        "./src/child_process.js"
+    ]
+}
