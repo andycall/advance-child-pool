@@ -3,7 +3,6 @@
  */
 
 let fork = require('child_process').fork;
-let uid = require('uid');
 let path = require('path');
 let _ = require('lodash');
 let uuid = require('node-uuid');
@@ -37,7 +36,7 @@ class ProcessManager {
         this.taskMap.set(task, entryPath);
     }
 
-    handleTooMuchError(callback) {}
+    handleTooMuchError(callback) { }
 
     kill() {
         for (let taskType of this.taskMap.keys()) {
