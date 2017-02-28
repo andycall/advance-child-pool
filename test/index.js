@@ -5,8 +5,6 @@ let assert = require('assert');
 const textFilePath = path.join(__dirname, 'text.js');
 const fileFilePath = path.join(__dirname, 'file.js');
 const errorFilePath = path.join(__dirname, 'error.js');
-
-
 describe('Child Process Manager Test', () => {
     before(() => {
         childProcess.registerTask('text', textFilePath);
