@@ -2,7 +2,7 @@
   "name": "child-process-manager",
   "version": "0.1.0",
   "description": "the child process manager module",
-  "main": "output/child_manager.js",
+  "main": "index.js",
   "directories": {
     "test": "test"
   },
