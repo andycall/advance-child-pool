@@ -21,6 +21,7 @@ class ProcessManager {
         this._childCount = 0;
         this.jobQuene = {};
         this.maxErrorCount = poolSize * 10;
+        this.maxResponseTime = 1000 * 4;
         this.errCount = 0;
     }
 
@@ -268,6 +269,9 @@ class ProcessManager {
 
         childInstance.once('message', (msg) => {
             callback(msg);
+
+            clearTimeout(idInfo.timer);
+            idInfo = null;
         });
     }
 
@@ -286,6 +290,11 @@ class ProcessManager {
             return;
         }
 
+        idInfo.timer = setTimeout(() => {
+            console.error('child process is hang up!!', message);
+            childInstance.kill();
+            childInstance = null;
+        }, this.maxResponseTime);
         childInstance.send(message);
     }
 

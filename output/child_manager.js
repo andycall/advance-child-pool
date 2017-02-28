@@ -19,6 +19,7 @@ class ProcessManager {
         this._childCount = 0;
         this.jobQuene = {};
         this.maxErrorCount = poolSize * 10;
+        this.maxResponseTime = 1000 * 4;
         this.errCount = 0;
     }
     _getChildSize() {
@@ -208,6 +209,8 @@ class ProcessManager {
         }
         childInstance.once('message', (msg) => {
             callback(msg);
+            clearTimeout(idInfo.timer);
+            idInfo = null;
         });
     }
     // 向进程发送数据
@@ -221,6 +224,11 @@ class ProcessManager {
             idInfo.data = message;
             return;
         }
+        idInfo.timer = setTimeout(() => {
+            console.error('child process is hang up!!', message);
+            childInstance.kill();
+            childInstance = null;
+        }, this.maxResponseTime);
         childInstance.send(message);
     }
     // 封装更彻底的接口，调用数据直接返回Promise
