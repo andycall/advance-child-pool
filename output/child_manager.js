@@ -2,7 +2,6 @@
  * 子node进程管理器
  */
 let fork = require('child_process').fork;
-let uid = require('uid');
 let path = require('path');
 let _ = require('lodash');
 let uuid = require('node-uuid');
