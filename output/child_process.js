@@ -35,7 +35,6 @@ class ProcessManager {
     kill() {
         for (let taskType of this.taskMap.keys()) {
             let taskPool = this.childMap.get(taskType);
-
             taskPool.forEach(info => {
                 let instance = info.childInstance;
                 instance.kill();

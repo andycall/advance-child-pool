@@ -40,15 +40,13 @@ class ProcessManager {
     handleTooMuchError(callback) {}
 
     kill() {
-        for (let taskType of this.childMap) {
-            console.log(taskType);
+        for (let taskType of this.taskMap.keys()) {
+            let taskPool = this.childMap.get(taskType);
 
-            // let taskPool = this.childMap.get(taskType);
-            //
-            // taskPool.forEach(info => {
-            //     let instance = info.childInstance;
-            //     instance.kill();
-            // });
+            taskPool.forEach(info => {
+                let instance = info.childInstance;
+                instance.kill();
+            });
         }
     }
 
@@ -59,7 +57,7 @@ class ProcessManager {
         let childPool = this.childMap.get(taskType);
 
         setTimeout(() => {
-            this.maxErrorCount = 0;
+            this.maxErrorCount = this.poolSize * 10;
         }, 5000);
 
         childPool.forEach(info => {
@@ -274,20 +272,16 @@ class ProcessManager {
 }
 
 const manager = new ProcessManager();
-//
-// process.on('SIGKILL', function() {
-//     console.log('killed by system');
-//     manager.kill();
-// });
 
-process.on('beforeExit', function() {
+process.on('exit', function () {
     console.log('killing..');
     manager.kill();
+    process.exit(0);
 });
-
-process.on('SIGINT', function() {
+process.on('SIGINT', function () {
     console.log('Ctrl-C');
     manager.kill();
+    process.exit(0);
 });
 
 
