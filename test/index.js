@@ -1,101 +1,120 @@
-let ChildProcessManager = require('../output/index');
-let childProcess = require('../output/child_process');
+let childProcess = require('../output/child_manager');
 let path = require('path');
 let assert = require('assert');
-let exec = require('child_process').execSync;
 
 const textFilePath = path.join(__dirname, 'text.js');
 const fileFilePath = path.join(__dirname, 'file.js');
+const errorFilePath = path.join(__dirname, 'error.js');
 
-childProcess.registerTask('text', textFilePath);
-childProcess.registerTask('file', fileFilePath);
 
-childProcess.childStartUp();
-
-for (let i = 0; i < 6; i++) {
-    let job = childProcess.createJob('text');
-
-    childProcess.addMessageListener(job, (msg) => {
-        console.log('the index of job\'s msg:', msg);
-        childProcess.detach(job);
+describe('Child Process Manager Test', () => {
+    before(() => {
+        childProcess.registerTask('text', textFilePath);
+        childProcess.registerTask('file', fileFilePath);
+        childProcess.registerTask('error', errorFilePath);
+        childProcess.childStartUp();
     });
 
-    childProcess.sendMessageToChild(job, {
-        data: `hello index:${i}`
+    it('create Text Job', (done) => {
+        let data = {
+            msg: 'helloworld'
+        };
+
+        childProcess.sendData('text', data).then((res) => {
+            assert.equal(res.type, 'text');
+            assert.equal(res.msg, 'helloworld');
+
+            done();
+        }).catch(err => {
+            done(err);
+        })
     });
-}
 
-// console.log(childProcess);
+    it('create Many Job', done => {
+        let data = {
+            msg: 'helloworld'
+        };
 
-// describe('Child Process Manager Test', () => {
-//     function createChildProcess(type, msg) {
-//         return new Promise((resolve, reject) => {
-//             let childInstanceId = childProcess.createJob(type);
-//             childProcess.addMessageListener(childInstanceId, (_msg) => {
-//                 assert.deepEqual(_msg, {
-//                     type: type,
-//                     msg: msg
-//                 });
+        let childArr = [];
 
-//                 resolve(_msg);
-//             });
+        for (let i = 0; i < 100; i ++) {
+            data.index = i;
+            let promise = childProcess.sendData('text', Object.assign({}, data));
+            childArr.push(promise)
+        }
 
-//             childProcess.sendMessageToChild(childInstanceId, msg);
-//         });
-//     }
+        Promise.all(childArr).then(result => {
+            result.forEach((item, index) => {
+                assert.equal(item.type, 'text');
+                assert.equal(item.msg, 'helloworld');
+                assert.equal(item.index, index);
+            });
+            done();
+        }).catch(err => {
+            done(err);
+        })
+    });
 
-//     it('child process test', (done) => {
-//         let childPromise = createChildProcess(childProcess, {
-//             msg: 'helloworld'
-//         }).then(() => {
-//             done();
-//         }).catch(err => {
-//             done(err);
-//         });
-//     });
+    it('create multi many job', done => {
+        let textData = {
+            msg: 'Hello Text'
+        };
 
-//     // it('10 child process test', (done) => {
-//     //     let childArr = [];
+        let fileData = {
+            msg: 'Hello File'
+        };
 
-//     //     for (let i = 0; i < 10; i++) {
-//     //         let childPromise = createChildProcess(childProcess, {
-//     //             msg: 'helloworld'
-//     //         });
-//     //         childArr.push(childPromise);
-//     //     }
+        let childArr = [];
 
-//     //     Promise.all(childArr).then(() => {
-//     //         done();
-//     //     }).catch(err => {
-//     //         done(err);
-//     //     })
-//     // });
+        for (let i = 0; i < 500; i ++) {
+            textData.index = i;
+            fileData.index = i;
+            let textPromise = childProcess.sendData('text', Object.assign({}, textData));
+            let filePromise = childProcess.sendData('file', Object.assign({}, fileData));
+            childArr.push(textPromise);
+            childArr.push(filePromise);
+        }
 
-//     // it('refer missing test', (done) => {
-//     //     let childArr = [];
+        Promise.all(childArr).then((result) => {
+            result.forEach((item, index) => {
+                if (index % 2 === 0) {
+                    assert.equal(item.type, 'text');
+                    assert.equal(item.msg, 'Hello Text');
+                    assert.equal(item.index, index / 2);
+                }
+                else {
+                    assert.equal(item.type, 'file');
+                    assert.equal(item.msg, 'Hello File');
+                    assert.equal(item.index, Math.floor(index / 2));
+                }
+            });
 
-//     //     for (let i = 0; i < 10; i++) {
-//     //         let child = createChildProcess(childProcess, {
-//     //             msg: 'helloworld'
-//     //         });
+            done();
+        }).catch(err => {
+            done(err);
+        })
+    });
 
-//     //         childArr.push(child);
-//     //     }
+    it('running error task', (done) => {
+        let childArr = [];
 
-//     //     let another = createChildProcess(childProcess, {
-//     //         msg: 'helloworld'
-//     //     });
+        for (let i = 0; i < 100; i ++) {
+            let errorData = {
+                msg: 'error!!',
+                index: i
+            };
 
-//     //     childArr.push(another);
+            let errorPromise = childProcess.sendData('error', errorData);
 
-//     //     Promise.all(childArr).then(() => {
-//     //         let managerSize = childProcess._getChildSize();
-//     //         let readySize = exec(`ps -ef | grep 'child.js'`);
+            childArr.push(errorPromise);
+        }
 
-//     //         console.log(managerSize, readySize.toString());
-//     //         done();
-//     //     }).catch(err => {
-//     //         done(err);
-//     //     });
-//     // });
-// });
+        Promise.all(childArr).then((result) => {
+            console.log('1', result);
+        }).catch(err => {
+            assert.equal(err, 'got Unexpected error!!');
+
+            done();
+        });
+    });
+});

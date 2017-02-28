@@ -1,10 +1,9 @@
-console.log('text child processs');
+let childTemplate = require('../output/child');
 
-process.on('message', (msg) => {
-    setTimeout(() => {
-        process.send({
-            type: 'text',
-            msg: msg
-        });
-    }, 1000);
+childTemplate((data, done) => {
+    done({
+        type: 'text',
+        msg: data.msg,
+        index: data.index
+    });
 });

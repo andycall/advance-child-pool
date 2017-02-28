@@ -4,7 +4,6 @@
         "outDir": "./output"
     },
     "include": [
-        "./src/index.js",
-        "./src/child_process.js"
+        "./src/*"
     ]
 }

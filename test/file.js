@@ -1,10 +1,9 @@
-console.log('file child process');
+let childTemplate = require('../src/child');
 
-process.on('message', (msg) => {
-    setTimeout(() => {
-        process.send({
-            type: 'file',
-            msg: msg
-        });
-    }, 1000);
+childTemplate((data, done) => {
+    done({
+        type: 'file',
+        msg: data.msg,
+        index: data.index
+    })
 });
