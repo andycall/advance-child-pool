@@ -1,4 +1,4 @@
-let childTemplate = require('../src/child');
+let childTemplate = require('../output/child');
 
 childTemplate((data, done) => {
     done({
