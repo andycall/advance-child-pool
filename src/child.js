@@ -3,7 +3,8 @@ let WrappedError = require('error/wrapped');
 let childProcessErrorWrapper = new WrappedError({
     message: '{message}',
     type: 'child-process-error',
-    stack: null
+    stack: null,
+    statusCode: null
 });
 
 module.exports = function(callback) {
@@ -18,7 +19,8 @@ module.exports = function(callback) {
                 success: false,
                 err: childProcessErrorWrapper(err, {
                     stack: err.stack,
-                    message: err.message
+                    message: err.message,
+                    statusCode: err.statusCode
                 })
             });
         });
