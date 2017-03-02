@@ -1,3 +1,11 @@
+let WrappedError = require('error/wrapped');
+
+let childProcessErrorWrapper = new WrappedError({
+    message: '{message}',
+    type: 'child-process-error',
+    stack: null
+});
+
 module.exports = function(callback) {
     process.on('message', (msg) => {
         onMessageReceive(msg).then((data) => {
@@ -8,7 +16,10 @@ module.exports = function(callback) {
         }).catch(err => {
             process.send({
                 success: false,
-                err: err.message
+                err: childProcessErrorWrapper(err, {
+                    stack: err.stack,
+                    message: err.message
+                })
             });
         });
     });

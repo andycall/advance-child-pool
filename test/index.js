@@ -110,7 +110,7 @@ describe('Child Process Manager Test', () => {
         Promise.all(childArr).then((result) => {
             console.log('1', result);
         }).catch(err => {
-            assert.equal(err, 'got Unexpected error!!');
+            assert.equal(err.message, 'got Unexpected error!!');
 
             done();
         });
