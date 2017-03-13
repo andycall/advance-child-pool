@@ -253,7 +253,7 @@ class ProcessManager {
     }
 
     // 添加消息回调
-    addMessageListener(id, callback) {
+    addMessageListener(id, callback = () => { }) {
         if (!this.idMap.has(id)) {
             throw new Error('未知的process Id');
         }
