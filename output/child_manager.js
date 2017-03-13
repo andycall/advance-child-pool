@@ -2,6 +2,7 @@
  * 子node进程管理器
  */
 let fork = require('child_process').fork;
+let execSync = require('child_process').execSync;
 let path = require('path');
 let _ = require('lodash');
 let uuid = require('node-uuid');
@@ -37,7 +38,8 @@ class ProcessManager {
             let taskPool = this.childMap.get(taskType);
             taskPool.forEach(info => {
                 let instance = info.childInstance;
-                instance.kill();
+                let instancePid = instance.pid;
+                execSync(`kill -9 ${instancePid}`);
             });
         }
     }
@@ -226,7 +228,8 @@ class ProcessManager {
         }
         idInfo.timer = setTimeout(() => {
             console.error('child process is hang up!!', message);
-            childInstance.kill();
+            let instancePid = childInstance.pid;
+            execSync(`kill ${instancePid}`);
             childInstance = null;
         }, this.maxResponseTime);
         childInstance.send(message);
