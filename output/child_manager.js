@@ -39,7 +39,7 @@ class ProcessManager {
             taskPool.forEach(info => {
                 let instance = info.childInstance;
                 let instancePid = instance.pid;
-                execSync(`kill -9 ${instancePid}`);
+                execSync(`kill ${instancePid}`);
             });
         }
     }
@@ -90,7 +90,7 @@ class ProcessManager {
                 }
                 this._childCount++;
                 let child = fork(entry);
-                child.on('close', this.handleChildExit.bind(this, taskType, entry, child));
+                child.on('exit', this.handleChildExit.bind(this, taskType, entry, child));
                 let childTaskInfo;
                 if (!this.childMap.has(taskType)) {
                     childTaskInfo = [];
