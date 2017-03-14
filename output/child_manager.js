@@ -20,7 +20,7 @@ class ProcessManager {
         this._childCount = 0;
         this.jobQuene = {};
         this.maxErrorCount = poolSize * 10;
-        this.maxResponseTime = 1000 * 4;
+        this.maxResponseTime = 1000 * 60;
         this.errCount = 0;
     }
     _getChildSize() {
