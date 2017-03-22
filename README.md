@@ -1,6 +1,5 @@
-child-process-manager
-========================
-Advance Node.js child process pool, support multitype child process, error handing。
+# advance-child-pool
+Advance Node.js child process pool, support multitype child process, error handing
 
 support features:
 + child process pool manage
