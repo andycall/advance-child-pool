@@ -1,7 +1,7 @@
 {
-  "name": "child-process-manager",
+  "name": "advance-child-pool",
   "version": "0.1.0",
-  "description": "the child process manager module",
+  "description": "Advance Node.js child process pool, support multitype child process, error handing",
   "main": "index.js",
   "directories": {
     "test": "test"
@@ -21,11 +21,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "ssh://g@gitlab.baidu.com:8022/bjh-data-transform/child-process-manager.git"
+    "url": "git@github.com:andycall/advance-child-pool.git"
   },
   "keywords": [
     "data-transform"
   ],
-  "author": "dongtiancheng@baidu.com",
+  "author": "dongtiangche@outlook.com",
   "license": "MIT"
 }

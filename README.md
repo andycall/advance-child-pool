@@ -1,18 +1,16 @@
 child-process-manager
 ========================
+Advance Node.js child process pool, support multitype child process, error handing。
 
-全功能Node.js子进程管理器
-
-支持以下强大的功能：
-
-+ 进程池管理
-+ 死进程复活
-+ 消息队列
-+ 多任务配置
+support features:
++ child process pool manage
++ recover dead child process
++ message queue
++ muilti task config
 
 ## Setup
 
-主进程配置
+### Config Master Process
 ```javascript
 let childProcess = require('child-process-manager').childManager;
 
@@ -20,14 +18,15 @@ const textFilePath = path.join(__dirname, 'text.js');
 const fileFilePath = path.join(__dirname, 'file.js');
 const errorFilePath = path.join(__dirname, 'error.js');
 
-// 注册任务
+// register child process
 childProcess.registerTask('text', textFilePath);
 childProcess.registerTask('file', fileFilePath);
 childProcess.registerTask('error', errorFilePath);
 
-// 启动子进程
+// start pool
 childProcess.childStartUp();
 
+// send data to child
 childProcess.sendData('text', {
     data: 'helloworld'
 }).then((res) => {
@@ -39,7 +38,7 @@ childProcess.sendData('text', {
 });
 ```
 
-子进程配置
+### Config Child
 ```javascript
 let childTemplate = require('child-process-manager').childWorker;
 
@@ -50,4 +49,10 @@ childTemplate((data, done) => {
         index: data.index
     })
 });
+```
+
+## Test
+run test
+```javascript
+npm test
 ```
